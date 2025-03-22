@@ -5,9 +5,13 @@ Smart Trip Planner is an AI-powered application designed to revolutionize the tr
 **Features** ✨
 
 Budget-Based Recommendations: Suggests the best cities/states to visit within the user's budget.
+
 Emergency Support: Recommends nearby hospitals in case of emergencies during trips.
+
 Personalized Tourism Guide: Offers detailed information about destinations, hotels, and travel options tailored to user preferences.
+
 User-Friendly Interface: Interactive and easy-to-use platform for seamless trip planning.
+
 **Technologies Used** 🛠️
 
 Backend: Python/Node.js with REST APIs
