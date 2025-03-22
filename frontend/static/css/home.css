@@ -1,0 +1,157 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: black;
+    background-color: white;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url("{% static 'images/homeimage.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+}
+
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ff4081;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: black;
+}
+
+.header .btn {
+    margin-left: 10px;
+    padding: 8px 15px;
+    background-color: #ff4081;
+    color: black;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: 2px solid black;
+}
+
+.header .btn:hover {
+    background-color: white;
+    color: #ff4081;
+}
+
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.profile-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid black;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 120px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.profile-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #ff4081;
+    color: white;
+}
+
+/* Welcome text below the header */
+.welcome-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+/* Centered intro section */
+.intro {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: lightyellow;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 30px 20px;
+}
+
+.feature {
+    text-align: center;
+    margin: 15px;
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 40%;
+    background: #ff4081;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.feature img {
+    max-width: 80px;
+    margin-bottom: 15px;
+}
+
+.feature h3 {
+    color: black;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.cta {
+    text-align: center;
+    margin: 20px;
+}
+
+.cta .btn {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: #ff4081;
+    color: black;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    border: 2px solid black;
+}
+
+.cta .btn:hover {
+    background-color: white;
+    color: #ff4081;
+}
