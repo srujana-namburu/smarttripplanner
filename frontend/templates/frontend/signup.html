@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - SmartTripPlanner</title>
+  <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+</head>
+<body>
+  <div class="background">
+    <div class="container">
+      <div class="signup-form">
+        <h2>Create Your Account</h2>
+        <form method="post" action="{% url 'signup' %}">
+          {% csrf_token %}
+          
+              <label for="username">Username</label>
+              <input type="text" name="username" id="username" placeholder="Enter your username" required>
+
+              <label for="email">Email</label>
+              <input type="email" name="email" id="mailid" placeholder="Enter your email" required>
+
+              <label for="password">Password</label>
+              <input type="password" name="password" id="password" placeholder="Enter your password" required>
+
+              <label for="security_question">Security Question</label>
+              <select name="security_question" id="security_question" required>
+                  <option value="">Select a Security Question</option>
+                  <option value="pet_name">What is the name of your first pet?</option>
+                  <option value="mother_maiden">What is your mother’s maiden name?</option>
+                  <option value="birth_city">In which city were you born?</option>
+                  <option value="best_friend">What is the name of your childhood best friend?</option>
+                  <option value="fav_teacher">What is the name of your favorite teacher?</option>
+              </select>
+
+              <label for="security_answer">Answer</label>
+              <input type="text" name="security_answer" id="security_answer" placeholder="Enter your answer" required>
+
+              <label for="profile_picture">Upload Profile Picture</label>
+              <input type="file" name="profile_picture" id="profile_picture" accept="image/*" required>
+
+              <button class="btn btn-success" type="submit">Register</button>
+        </form>
+        
+        <p>Already a User? <a href="{% url 'login' %}">Login</a></p>
+      </div>
+      <div class="info-box">
+        <h3>Why Register?</h3>
+        <p>Get personalized trip plans tailored to your preferences.</p>
+        <p>Access real-time safety alerts for your destinations.</p>
+        <p>Receive recommendations for sustainable tourism experiences.</p>
+        <p>Utilize our virtual assistant for behavior prediction and sentiment analysis.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Store email in localStorage when input value changes
+
+  </script>
+</body>
+</html>

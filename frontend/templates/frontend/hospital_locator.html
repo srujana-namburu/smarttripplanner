@@ -1,0 +1,141 @@
+{% load static %}
+{% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Location Tracking with Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; }
+        body { margin: 0; padding: 0; }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([21, 78], 5); 
+
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        });
+
+        var googlestreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        googlestreets.addTo(map);
+
+        var userMarker = null;
+        var userCircle = null;
+        var hospitalMarker = null;
+
+        async function fetchHospitals() {
+            try {
+                const response = await fetch("{% static 'data/Hospital_Data.json' %}");
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const hospitals = await response.json();
+                return hospitals;
+            } catch (error) {
+                console.error("Error fetching hospital data:", error);
+                return [];
+            }
+        }
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        async function findNearestHospital(userLat, userLon) {
+            const hospitals = await fetchHospitals();
+            if (!Array.isArray(hospitals) || hospitals.length === 0) return;
+
+            let nearestHospital = null;
+            let minDistance = Infinity;
+
+            hospitals.forEach(hospital => {
+                if (!hospital.hospital || !hospital.latitude || !hospital.longitude) return;
+
+                const lat = parseFloat(hospital.latitude);
+                const lon = parseFloat(hospital.longitude);
+                if (isNaN(lat) || isNaN(lon)) return;
+
+                const distance = getDistance(userLat, userLon, lat, lon);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestHospital = hospital;
+                }
+            });
+
+            if (nearestHospital) {
+                if (hospitalMarker) map.removeLayer(hospitalMarker);
+
+                hospitalMarker = L.marker([nearestHospital.latitude, nearestHospital.longitude], {
+                    icon: L.icon({
+                        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32],
+                        popupAnchor: [0, -30]
+                    })
+                }).addTo(map);
+
+                hospitalMarker.bindPopup(
+                    `<b>${nearestHospital.hospital}</b><br> 
+                     ${nearestHospital.City}, ${nearestHospital.State}<br> 
+                     Distance: ${minDistance.toFixed(2)} km`
+                ).openPopup();
+            }
+        }
+
+        function updateLocation(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            var accuracy = position.coords.accuracy;
+
+            findNearestHospital(lat, lng);
+
+            if (userMarker) {
+                userMarker.setLatLng([lat, lng]);
+                userCircle.setLatLng([lat, lng]);
+                userCircle.setRadius(20);
+            } else {
+                userMarker = L.marker([lat, lng]).addTo(map);
+                userCircle = L.circle([lat, lng], {
+                    color: '#3399ff',
+                    fillColor: 'lightblue',
+                    fillOpacity: 0.3,
+                    radius: accuracy
+                }).addTo(map);
+            }
+
+            map.setView([lat, lng], 17);
+        }
+
+        function handleLocationError(error) {
+            console.warn("Error fetching location:", error.message);
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(updateLocation, handleLocationError, {
+                enableHighAccuracy: true
+            });
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    </script>
+</body>
+
+</html>

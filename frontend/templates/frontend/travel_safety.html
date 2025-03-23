@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Tips</title>
+    <link rel="stylesheet" href="{% static 'css/travsafe.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <h1>SmartTripPlanner</h1>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'dynamic_pricing' %}">Destinations</a>
+            <a href="{% url 'safety_tips' %}">Safety Tips</a>
+            <a href="{% url 'contact' %}">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="tips">
+            <h2>Safety Tips for {{ place }}</h2>
+            
+            {% for season, tip in safety_tips.items %}
+                <div class="tip-card">
+                    <h3>{{ season }} Tips</h3>
+                    <p>{{ tip }}</p>
+                </div>
+            {% empty %}
+                <p>No safety tips available for this destination.</p>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Itinerary</title>
+    <link rel="stylesheet" href="{% static 'css/va.css' %}">
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 250px;
+            background-color: #ff4081;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sidebar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .nav-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #ff4081;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .sidebar .nav-button:hover {
+            background-color: #1abc9c;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #ff4081;
+            margin-bottom: 10px;
+        }
+
+        pre {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        /* Explore Section */
+        .search-container {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .search-container h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .search-container input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .search-container button {
+            background-color: #ff4081;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-container button:hover {
+            background-color: #ff4081;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="logo">Travel Assistant</div>
+        <a href="{% url 'plan_trip' %}" class="nav-button">Back to Trip Planner</a>
+        
+        <!-- Safety Tips Button -->
+        <form action="{% url 'safety_tips' %}" method="GET">
+            <input type="hidden" name="place" value="{{ destination }}">
+            <button type="submit" class="nav-button safety-button">Safety Tips</button>
+        </form>
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-box">
+            <h2>Trip Itinerary for {{ destination }}</h2>
+            <pre>{{ itinerary }}</pre>
+        </div>
+
+        <!-- New Form to Enter Place Name -->
+        <div class="search-container">
+            <h3>Explore a Place</h3>
+            <form action="{% url 'explore_place' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="place_name" placeholder="Enter a city or place" required>
+                <br>
+                <button type="submit">Explore</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
