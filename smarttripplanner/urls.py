@@ -42,4 +42,6 @@ urlpatterns = [
     path('user/', include('django.contrib.auth.urls')),
     path('login/', views.login_view, name='login'),  # Use custom login view if needed
     path('logout/', views.logout_view, name='logout'),
+    # path('logout/', auth_views.LogoutView.as_view(next_page='login/'), name='logout'),
+
 ]

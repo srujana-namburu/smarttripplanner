@@ -33,8 +33,14 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score, classification_report
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.conf import settings
 import base64
 from io import BytesIO
+import io
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 # Download NLTK data
 nltk.download('vader_lexicon')
@@ -44,6 +50,30 @@ df = pd.read_csv("tourist_review.csv")  # Ensure correct path
 
 # Fill missing values
 df['reviews'] = df['review'].fillna("")
+
+
+hotels_df = pd.read_csv("hotels_india.csv")
+
+# Preprocessing
+hotels_df['Hotel_Price'] = pd.to_numeric(hotels_df['Hotel_Price'], errors='coerce')
+hotels_df['Hotel_Rating'] = pd.to_numeric(hotels_df['Hotel_Rating'], errors='coerce')
+
+hotels_df.fillna({
+    'Hotel_Price': hotels_df['Hotel_Price'].mean(),
+    'Hotel_Rating': hotels_df['Hotel_Rating'].mean()
+}, inplace=True)
+
+FEATURE_WEIGHTS = {'Hotel_Price': 0.5, 'Hotel_Rating': 0.4, 'DistanceFromCenter': 0.1}
+scaler = MinMaxScaler()
+normalized_features = scaler.fit_transform(hotels_df[['Hotel_Price', 'Hotel_Rating']])
+normalized_df = pd.DataFrame(normalized_features, columns=['Normalized_Price', 'Normalized_Rating'])
+
+hotels_df['Score'] = (
+    FEATURE_WEIGHTS['Hotel_Price'] * (1 - normalized_df['Normalized_Price']) +
+    FEATURE_WEIGHTS['Hotel_Rating'] * normalized_df['Normalized_Rating']
+)
+hotels_df['Score'] = hotels_df['Score'].fillna(0)
+
 
 # Function to clean text
 def clean_text(text):
@@ -202,6 +232,7 @@ def plan_trip(request):
 
     return render(request, "frontend/virtual_assistant.html")
 
+
 def virtual(request):
     return render(request, 'frontend/virtual.html')
 
@@ -250,23 +281,30 @@ def analyze_sentiment(request):
 
 
 
-@login_required
+@login_required(login_url='/frontend/login/')
 def home(request):
+    print("Current User:", request.user)  # Debugging
+
     profile = Profile.objects.get(user=request.user)
     return render(request, 'frontend/home.html', {'profile': profile})
 
+@login_required(login_url='/frontend/login/')
 def sentiment_analysis(request):
     return render(request, "frontend/sentiment_analysis.html") 
 
+@login_required(login_url='/frontend/login/')
 def virtual_assistant(request):
     return render(request, 'frontend/virtual_assistant.html')
 
+@login_required(login_url='/frontend/login/')
 def dynamic_pricing(request):
     return render(request, 'frontend/dynamic_pricing.html')
 
+@login_required(login_url='/frontend/login/')
 def travel_safety(request):
     return render(request, 'frontend/travel_safety.html')
 
+@login_required(login_url='/frontend/login/')
 def hospital_locator(request):
     return render(request, 'frontend/travel_safety.html')
 
@@ -276,6 +314,7 @@ def tourist_guide(request):
 def get_trip_details(request):
     return render(request, 'frontend/get_trip_details.html')
 
+@login_required(login_url='/frontend/login/')
 def safety_tips(request):
     return render(request, 'safety_tips.html')
 
@@ -331,6 +370,8 @@ def signup(request):
         return redirect('/frontend/verify-otp/')
 
     return render(request, 'frontend/signup.html')
+
+
 def verify_otp(request):
     if request.method == 'GET':
         print('session:',request.session)
@@ -378,42 +419,72 @@ def verifyOtp(request):
 
 from django.contrib.auth import logout
 
+# def login_view(request):
+#     print(request.method)
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         password = request.POST['password']
+#         try:
+#             user = User.objects.get(email = email)
+#         except User.DoesNotExist:
+#             messages.error(request , "User With this email does not exist .\n Try Registering")
+#             return redirect('frontend/signup.html')
+#         user = authenticate(request,username=user.username, password=password)
+#         print(user)
+
+#         if user is not None:
+#             login(request,user)
+#             messages.success(request,'Login Successfull.')
+#             return redirect('http://127.0.0.1:8000/login/')
+#             # otp_entry, _ = UserOTP.objects.get_or_create(user=user)
+#             # otp_entry.generate_otp()
+
+#             # send_mail(
+#             #     'Your OTP Code',
+#             #     f'Your OTP is {otp_entry.otp}',
+#             #     'your-email@gmail.com',
+#             #     [user.email],
+#             #     fail_silently=False,
+#             # )
+#             # request.session['otp_user'] = user.username
+#             # return redirect('verify_otp')
+#         else:
+#             messages.error(request,"Invalid Credentials. Try again")
+#     return render(request, 'frontend/home.html')
+
 def login_view(request):
     print(request.method)
+    
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = request.POST['password']
+        password = request.POST.get('password')  # Use `.get()` to avoid `KeyError`
+
         try:
-            user = User.objects.get(email = email)
+            user = User.objects.get(email=email)  # Fetch user by email
         except User.DoesNotExist:
-            messages.error(request , "User With this email does not exist .\n Try Registering")
-            return redirect('frontend/signup.html')
-        user = authenticate(request,username=user.username, password=password)
+            messages.error(request, "User with this email does not exist. Try registering.")
+            return redirect('signup')  # Redirect to signup page
+
+        # Authenticate using email if supported, else use username
+        user = authenticate(request, username=user.username, password=password)
         print(user)
 
         if user is not None:
-            login(request,user)
-            messages.success(request,'Login Successfull.')
-            return redirect('http://127.0.0.1:8000/login/')
-            # otp_entry, _ = UserOTP.objects.get_or_create(user=user)
-            # otp_entry.generate_otp()
+            login(request, user)
+            messages.success(request, 'Login Successful.')
 
-            # send_mail(
-            #     'Your OTP Code',
-            #     f'Your OTP is {otp_entry.otp}',
-            #     'your-email@gmail.com',
-            #     [user.email],
-            #     fail_silently=False,
-            # )
-            # request.session['otp_user'] = user.username
-            # return redirect('verify_otp')
+            # Redirect to 'next' page if exists, else dashboard
+            # next_url = request.GET.get('next', 'dashboard')  
+            return redirect('home')
         else:
-            messages.error(request,"Invalid Credentials. Try again")
-    return render(request, 'frontend/home.html')
+            messages.error(request, "Invalid credentials. Try again.")
+
+    return render(request, 'frontend/login.html')
 
 def logout_view(request):
+    # print('lgoutout to here')
     logout(request)
-    return redirect('frontend/login.html')
+    return redirect('/')
 
 def update_profile(request):
     if request.method == 'POST':
@@ -436,3 +507,178 @@ def update_profile(request):
         return redirect('home')
 
     return render(request, 'frontend/update_profile.html')
+
+# @csrf_exempt
+# def recommend_hotels(request):
+#     if request.method == 'GET':
+#         location = request.GET.get('location', 'Delhi')  # Default to Delhi
+#         top_n = int(request.GET.get('top_n', 5))  # Default to 5 hotels
+
+#         filtered_hotels = hotels_df[hotels_df['City'].str.contains(location, case=False, na=False)]
+
+#         if filtered_hotels.empty:
+#             return JsonResponse({"message": f"No hotels found for location: {location}"}, status=404)
+
+#         recommendations = filtered_hotels.sort_values(by='Score', ascending=False).head(top_n)
+        
+#         hotels_list = recommendations[['Hotel_Name', 'Hotel_Price', 'Hotel_Rating', 'Score']].to_dict(orient='records')
+        
+#         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#             return JsonResponse(hotels_list, safe=False)
+        
+#         return render(request, "frontend/hotel_list.html", {"hotels": hotels_list,"location":location })
+
+@login_required(login_url='/login/') 
+def recommend_hotels(request):
+    if request.method == 'GET':
+        location = request.GET.get('location', 'Delhi')  # Default to Delhi
+        top_n = int(request.GET.get('top_n', 5))  # Default to 5 hotels
+
+        filtered_hotels = hotels_df[hotels_df['City'].str.contains(location, case=False, na=False)]
+
+        if filtered_hotels.empty:
+            return JsonResponse({"message": f"No hotels found for location: {location}"}, status=404)
+
+        recommendations = filtered_hotels.sort_values(by='Score', ascending=False).head(top_n)
+        
+        hotels_list = recommendations[['Hotel_Name', 'Hotel_Price', 'Hotel_Rating', 'Score']].to_dict(orient='records')
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse(hotels_list, safe=False)
+        
+        return render(request, "frontend/hotel_list.html", {"hotels": hotels_list, "location": location})
+    
+
+nltk.download('vader_lexicon')
+
+tourism_reviews_df = pd.read_csv("tourist_review.csv")
+
+tourism_reviews_df['reviews'] = tourism_reviews_df['review'].fillna("")
+sia = SentimentIntensityAnalyzer()
+
+
+
+def clean_text(text):
+    if isinstance(text, str):
+        text = re.sub(r'\W', ' ', text)  
+        text = re.sub(r'\s+', ' ', text)
+        return text.lower().strip()
+    return ""
+
+tourism_reviews_df['cleaned_reviews'] = tourism_reviews_df['reviews'].apply(clean_text)
+
+
+def analyze_sentiment(text):
+    scores = sia.polarity_scores(text)
+    if scores['compound'] >= 0.05:
+        return "Positive"
+    elif scores['compound'] <= -0.05:
+        return "Negative"
+    else:
+        return "Neutral"
+
+tourism_reviews_df['sentiment'] = tourism_reviews_df['cleaned_reviews'].apply(analyze_sentiment)
+
+vectorizer = TfidfVectorizer(max_features=5000)
+X = vectorizer.fit_transform(tourism_reviews_df['cleaned_reviews'])
+
+def generate_sentiment_visuals(sentiment_data, words):
+    # Pie Chart
+    fig, ax = plt.subplots()
+    ax.pie(
+        sentiment_data.values(),
+        labels=sentiment_data.keys(),
+        autopct="%1.1f%%",
+        colors=["green", "gray", "red"]
+    )
+    ax.set_title("Sentiment Distribution")
+
+    # Convert Pie Chart to base64
+    pie_buffer = io.BytesIO()
+    plt.savefig(pie_buffer, format='png', bbox_inches='tight')
+    pie_buffer.seek(0)
+    pie_chart_base64 = base64.b64encode(pie_buffer.getvalue()).decode('utf-8')
+    plt.close()
+
+    # Word Cloud
+    wordcloud = WordCloud(width=800, height=400, background_color="white").generate(" ".join(words))
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.imshow(wordcloud, interpolation="bilinear")
+    ax.axis("off")
+
+    # Convert Word Cloud to base64
+    wc_buffer = io.BytesIO()
+    plt.savefig(wc_buffer, format='png', bbox_inches='tight')
+    wc_buffer.seek(0)
+    wordcloud_base64 = base64.b64encode(wc_buffer.getvalue()).decode('utf-8')
+    plt.close()
+
+    return {
+        "pie_chart_base64": pie_chart_base64,
+        "wordcloud_base64": wordcloud_base64,
+    }
+
+
+
+@login_required(login_url='/frontend/login/')
+def analyze_location_view(request):
+    if request.method == "POST":
+        location = request.POST.get("location")
+
+        # Convert locations to lowercase
+        tourism_reviews_df["location"] = tourism_reviews_df["location"].str.lower()
+        location_reviews_df = tourism_reviews_df[tourism_reviews_df["location"] == location.lower()]
+        # print("Unique Locations in DataFrame:", tourism_reviews_df["location"].unique())
+
+        if location_reviews_df.empty:
+            return render(request, "frontend/safety_tips.html", {"message": f"No reviews available for {location}."})
+
+        # Get sentiment counts
+        sentiment_counts = location_reviews_df['sentiment'].value_counts()
+
+        # **Generate Pie Chart in Base64**
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.pie(
+            sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%',
+            colors=['lightgreen', 'red', 'gray']
+        )
+        ax.set_title(f"Sentiment Distribution for {location}")
+
+        pie_chart_buffer = io.BytesIO()
+        plt.savefig(pie_chart_buffer, format='png', bbox_inches='tight')
+        pie_chart_buffer.seek(0)
+        pie_chart_base64 = base64.b64encode(pie_chart_buffer.getvalue()).decode('utf-8')
+        plt.close()
+
+        # **Generate Word Cloud in Base64**
+        all_reviews_text = " ".join(location_reviews_df['cleaned_reviews'])
+        wordcloud = WordCloud(width=600, height=300, background_color='white').generate(all_reviews_text)
+
+        wordcloud_buffer = io.BytesIO()
+        wordcloud_image = wordcloud.to_image()  # Convert word cloud to PIL Image
+        wordcloud_image.save(wordcloud_buffer, format="PNG")  # Save to buffer
+        wordcloud_buffer.seek(0)
+        wordcloud_base64 = base64.b64encode(wordcloud_buffer.getvalue()).decode('utf-8')
+
+        # **Construct Summary**
+        positive_reviews = location_reviews_df[location_reviews_df['sentiment'] == "Positive"]['cleaned_reviews']
+        negative_reviews = location_reviews_df[location_reviews_df['sentiment'] == "Negative"]['cleaned_reviews']
+
+        def get_top_words(text_series):
+            words = " ".join(text_series).split()
+            common_words = [word for word, _ in Counter(words).most_common(5)]
+            return ", ".join(common_words) if common_words else "no specific keywords"
+
+        positive_summary = f"People like {location} for its {get_top_words(positive_reviews)}." if not positive_reviews.empty else "No significant positive feedback."
+        negative_summary = f"Some concerns include {get_top_words(negative_reviews)}." if not negative_reviews.empty else "No major negative concerns."
+
+        summary = f"{positive_summary} {negative_summary}"
+
+        return render(request, "frontend/safety_tips.html", {
+            "location": location,
+            "summary": summary,
+            "pie_chart_base64": pie_chart_base64,
+            "wordcloud_base64": wordcloud_base64
+        })
+
+    return render(request, "frontend/safety_tips.html")

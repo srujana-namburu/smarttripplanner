@@ -1,85 +1,218 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SmartTripPlanner</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        body {
-            background: url("{% static 'images/home.jpg' %}") no-repeat center center fixed;
-            background-size: cover;
-        }
+      .hero {
+        background: url("{% static 'images/travelbg.jpg' %}") no-repeat center
+          center fixed;
+        background-size: cover;
+      }
+      .welcome {
+        background: url("{% static 'images/introbg.png' %}") no-repeat center
+          center;
+        background-size: cover;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <header class="header">
-        <div class="logo">SmartTripPlanner</div>
+  <body>
+    <!-- <div class="header_section">
+      <header class="header">
         <nav>
-            <a href="{% url 'login' %}" class="btn">Login</a>
-            <a href="#" class="btn">Get Started</a>
-            <div class="profile-dropdown">
-                <img src="{% static 'images/default-profile.png' %}" alt="Profile" class="profile-btn">
-                <div class="dropdown-content">
-                    <a href="{% url 'update_profile' %}">Update Profile</a>
-                    <a href="{% url 'logout' %}">Logout</a>
-                </div>
-            </div>
+          <a href="{% url 'login' %}" class="btn">Login</a>
+          <a href="#" class="btn">Get Started</a>
+          
         </nav>
-    </header>
+      </header>
+    </div> -->
 
-    <div class="welcome-text">
-        <h2>Welcome, {{ user.username }}</h2>
+    <div class="hero">
+      <div class="logo">SmartTripPlanner</div>
+      <div class="profile-dropdown">
+        <img
+          src="{% static 'images/default-profile.png' %}"
+          alt="Profile"
+          class="profile-btn"
+        />
+        <div class="dropdown-content">
+          <a href="{% url 'update_profile' %}">Update Profile</a>
+          <a href="{% url 'logout' %}">Logout</a>
+        </div>
+      </div>
     </div>
 
-    <main>
-        <section class="intro">
-            <h1>Explore Your Next Adventure</h1>
-            <p>Discover the world with SmartTripPlanner, your ultimate travel companion!</p>
-        </section>
+    <div class="welcome">
+      <div class="welcome-text">
+        <h2>Welcome, Kalyan pendem</h2>
+        <!-- <h2>Welcome, {{ user.username }}</h2> -->
+      </div>
 
-        <section class="features">
-            <div class="feature">
-                <img src="{% static 'images/virtual-assistant.png' %}" alt="AI-powered Virtual Travel Assistant">
-                <a href="{% url 'virtual_assistant' %}" class="btn"><h3>AI-powered Virtual Travel Assistant</h3></a>
-                <p>Your personal guide to seamless travel planning.</p>
-            </div>
-            <div class="feature">
-                <img src="{% static 'images/dynamic-pricing.png' %}" alt="Dynamic Pricing Optimization">
-                <a href="{% url 'dynamic_pricing' %}" class="btn"><h3>Dynamic Pricing Optimization</h3></a>
-                <p>Get the best prices with our smart algorithms.</p>
-            </div>
-            <div class="feature">
-                <img src="{% static 'images/travel-safety.png' %}" alt="Real-time Travel Safety Advisory">
-                <a href="{% url 'travel_safety' %}" class="btn"><h3>Real-time Travel Safety Advisory</h3></a>
-                <p>Stay informed with live safety updates.</p>
-            </div>
-            <div class="feature">
-                <img src="{% static 'images/emergency-locator.png' %}" alt="Emergency Hospital Locator">
-                <a href="{% url 'hospital_locator' %}" class="btn">
-                    <h3>Emergency Hospital Locator</h3>
-                </a>
-                <p>Find the nearest medical help when you need it.</p>
-            </div>
-        </section>
+      <img src="{% static 'images/island.png' %}" id="island" alt="" />
+      <div class="welcome_sub">
+        <h1 class="subs">Explore Your Next Adventure</h1>
+        <p>
+          Discover the world with SmartTripPlanner, your ultimate travel
+          companion!
+        </p>
+        <a href="#features">
+          <button type="button" id="cabtn">Click Here to explore</button>
+        </a>
+      </div>
+    </div>
 
-        <div class="cta">
-            <a href="{% url 'sentiment_analysis' %}" class="btn btn-dark-pink">Sentiment Analysis</a>
+    <div class="features" id="features">
+      <div class="bg_blurs bg_blurs1"></div>
+      <div class="bg_blurs bg_blurs2"></div>
+      <div class="bg_blurs bg_blurs3"></div>
+      <h1 class="features_text">Services We Provide</h1>
+      <div class="features_container">
+        <a href="{% url 'virtual_assistant' %}" class="feature_card">
+          <div class="feature_detail">
+            <div class="feature_detail_head">
+              <h1>VTA</h1>
+              <h2>Virtual Travel Assistant</h2>
+            </div>
+            <div class="feature_detail_body">
+              <h3>AI-powered Virtual Travel Assistant</h3>
+              <h3>Your personal guide to seamless travel planning</h3>
+            </div>
+          </div>
+          <div class="features_images_holder">
+            <img
+              src="{% static 'images/vtl.jpg' %}"
+              id="vi"
+              class="features_images"
+              alt=""
+            />
+          </div>
+        </a>
+        <a href="{% url 'dynamic_pricing' %}" class="feature_card">
+          <div class="feature_detail">
+            <div class="feature_detail_head">
+              <h1>DPO</h1>
+              <h2>Dynamic Pricing Optimization</h2>
+            </div>
+            <div class="feature_detail_body">
+              <h3>Get the best prices with our smart algorithms</h3>
+              <!-- <h3>Your personal guide to seamless travel planning</h3> -->
+            </div>
+          </div>
+          <div class="features_images_holder">
+            <img
+              src="{% static 'images/price.png' %}"
+              id="vi"
+              class="features_images"
+              alt=""
+            />
+          </div>
+        </a>
+        <a href="{% url 'travel_safety' %}" class="feature_card">
+          <div class="feature_detail">
+            <div class="feature_detail_head">
+              <h1>RTSA</h1>
+              <h2>Sentimental Analysis</h2>
+            </div>
+            <div class="feature_detail_body">
+              <h3>Stay informed with live safety updates</h3>
+              <!-- <h3>Your personal guide to seamless travel planning</h3> -->
+            </div>
+          </div>
+          <div class="features_images_holder">
+            <img
+              src="{% static 'images/analysis.png' %}"
+              id="vi"
+              class="features_images"
+              alt=""
+            />
+          </div>
+        </a>
+        <a href="{% url 'hospital_locator' %}" class="feature_card">
+          <div class="feature_detail">
+            <div class="feature_detail_head">
+              <h1>EHL</h1>
+              <h2>Emergency Hospital Locator</h2>
+            </div>
+            <div class="feature_detail_body">
+              <h3>Find the nearest medical help when you need it</h3>
+              <!-- <h3>Your personal guide to seamless travel planning</h3> -->
+            </div>
+          </div>
+          <div class="features_images_holder">
+            <img
+              src="{% static 'images/hospital.png' %}"
+              id="vi"
+              class="features_images"
+              alt=""
+            />
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- <main>
+      <section class="features">
+        <div class="feature">
+          <img
+            src="{% static 'images/virtual-assistant.png' %}"
+            alt="AI-powered Virtual Travel Assistant"
+          />
+          <a href="{% url 'virtual_assistant' %}" class="btn"
+            ><h3>AI-powered Virtual Travel Assistant</h3></a
+          >
+          <p>Your personal guide to seamless travel planning.</p>
         </div>
-    </main>
+        <div class="feature">
+          <img
+            src="{% static 'images/dynamic-pricing.png' %}"
+            alt="Dynamic Pricing Optimization"
+          />
+          <a href="{% url 'dynamic_pricing' %}" class="btn"
+            ><h3>Dynamic Pricing Optimization</h3></a
+          >
+          <p>Get the best prices with our smart algorithms.</p>
+        </div>
+        <div class="feature">
+          <img
+            src="{% static 'images/travel-safety.png' %}"
+            alt="Real-time Travel Safety Advisory"
+          />
+          <a href="{% url 'travel_safety' %}" class="btn"
+            ><h3>Real-time Travel Safety Advisory</h3></a
+          >
+          <p>Stay informed with live safety updates.</p>
+        </div>
+        <div class="feature">
+          <img
+            src="{% static 'images/emergency-locator.png' %}"
+            alt="Emergency Hospital Locator"
+          />
+          <a href="{% url 'hospital_locator' %}" class="btn">
+            <h3>Emergency Hospital Locator</h3>
+          </a>
+          <p>Find the nearest medical help when you need it.</p>
+        </div>
+      </section>
+
+      <div class="cta">
+        <a href="{% url 'sentiment_analysis' %}" class="btn btn-dark-pink"
+          >Sentiment Analysis</a
+        >
+      </div>
+    </main> -->
 
     <!-- Leaflet Map -->
-    <section>
-        <h2>Your Live Location</h2>
-        <div id="map"></div>
-    </section>
+    <!-- <section>
+      <h2>Your Live Location</h2>
+      <div id="map"></div>
+    </section> -->
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="{% static 'js/livelocation.js' %}"></script>
-
-</body>
+  </body>
 </html>

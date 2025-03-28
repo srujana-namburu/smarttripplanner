@@ -1,26 +1,107 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SmartTripPlanner</title>
-    <link rel="stylesheet" href="{% static 'css/dp.css' %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'css/dp.css' %}" />
+  </head>
+  <body>
     <header>
-        <div class="logo">SmartTripPlanner</div>
-        <nav>
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'home' %}">Destinations</a>
-            <a href="{% url 'home' %}">Pricing</a>
-            <a href="{% url 'contact' %}">Contact</a>
-        </nav>
+      <div class="logo">SmartTripPlanner</div>
+      <nav>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'home' %}">Destinations</a>
+        <a href="{% url 'home' %}">Pricing</a>
+        <a href="{% url 'contact' %}">Contact</a>
+      </nav>
     </header>
-
+    <h1 class="page_header">Dynamic Pricing Optimization for Hotels</h1>
     <main>
-        <section class="pricing-optimization">
-            <h1>Dynamic Pricing Optimization for Hotels</h1>
+      <div class="form_header">
+        <h2>Search Hotels</h2>
+        <form action="">
+          <div class="form_fields">
+            <label for="location">Location</label>
+            <input
+              type="text"
+              name="location"
+              id="location_field"
+              placeholder="Enter the location"
+              required
+              class="form_input_field"
+            />
+          </div>
+          <div class="form_fields">
+            <label for="count">Count</label>
+            <input
+              type="number"
+              name="location"
+              id="count_field"
+              placeholder="Enter the location"
+              class="form_input_field"
+            />
+          </div>
+          <div class="form_submit">
+            <button type="submit" class="form_submit_field">Search</button>
+          </div>
+        </form>
+      </div>
+      <div class="hotel_cards_container"></div>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        fetchHotels('Delhi', 5);
+
+        document
+          .querySelector('form')
+          .addEventListener('submit', function (event) {
+            event.preventDefault();
+            const location = document.querySelector('#location_field').value;
+            const count = document.querySelector('#count_field').value || 5;
+            fetchHotels(location, count);
+          });
+      });
+
+      function fetchHotels(location, count) {
+        fetch(
+          `/frontend/recommend-hotels?location=${location}&top_n=${count}`,
+          {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            const container = document.querySelector('.hotel_cards_container');
+            container.innerHTML = '';
+            if (data.message) {
+              container.innerHTML = `<p>${data.message}</p>`;
+              return;
+            }
+            data.forEach((hotel) => {
+              const hotelCard = `
+                  <div class="hotel_card">
+                    <h3>${hotel.Hotel_Name}</h3>
+                    <div class="hotel_details">
+                      <p>Location: ${location}</p>
+                      <p>Price: ₹${hotel.Hotel_Price}</p>
+                      <p>Rating: ${hotel.Hotel_Rating} ⭐</p>
+                      <p>Score: ${hotel.Score.toFixed(2)}</p>
+                    </div>
+                  </div>`;
+              container.innerHTML += hotelCard;
+            });
+          })
+          .catch((error) => console.error('Error fetching hotels:', error));
+      }
+    </script>
+  </body>
+</html>
+
+<!-- <section class="pricing-optimization">
+            
             <div class="budget-options">
                 <div class="budget-card">
                     <img src="{% static 'images/highb.jpg' %}" alt="Medium Budget Hotel">
@@ -59,7 +140,4 @@
                 <label><input type="radio" name="room" value="single"> Single Bed</label>
                 <label><input type="radio" name="room" value="dual"> Dual Bed</label>
             </form>
-        </section>
-    </main>
-</body>
-</html>
+        </section> -->

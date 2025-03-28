@@ -1,84 +1,228 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #ff4081;
-    color: white;
-    padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(54, 155, 180);
+  color: white;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  /* color: rgb(0, 70, 87); */
+  color: #fff;
 }
 
 nav a {
-    color: white;
-    margin: 0 15px;
-    text-decoration: none;
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+}
+
+.page_header {
+  margin-left: 1.2rem;
+  font-size: 1.4rem;
+  color: transparent;
+  background: linear-gradient(125deg, rgb(16, 55, 63), rgb(46, 174, 207));
+  -webkit-background-clip: text;
 }
 
 main {
-    padding: 20px;
+  padding: 20px;
 }
 
+form {
+  display: flex;
+  gap: 10px;
+}
 
+.form_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form_fields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form_input_field {
+  background: rgb(225, 225, 225);
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+}
+
+.form_submit {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+}
+
+.form_submit_field {
+  height: fit-content;
+  background: rgb(215, 215, 215);
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  transition: 0.1s ease-in;
+}
+
+.form_submit_field:hover {
+  background: rgb(245, 244, 244);
+}
 /* Styling for the Budget Cards */
 .budget-card {
-    display: flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 350px; /* Adjust as needed */
+  margin: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.hotel_cards_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.hotel_card {
+  background: rgba(255, 255, 255, 0.8); /* Glass effect */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgb(16, 55, 63); /* Dark text for contrast */
+  border-radius: 25px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  width: 320px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(16, 55, 63, 0.2);
+}
+
+.hotel_card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.hotel_details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.hotel_card h3 {
+  margin-top: -9px;
+  border-top-right-radius: 25px;
+  border-top-left-radius: 25px;
+  color: rgb(255, 255, 255); /* Darker accent */
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  font-weight: bold;
+  background: rgb(16, 55, 63);
+  padding: 10px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hotel_card p {
+  font-size: 1rem;
+  /* margin: 5px 0; */
+}
+
+.hotel_card p:nth-child(2) {
+  /* font-weight: bold; */
+}
+
+.hotel_card p:last-child {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: rgb(46, 174, 207); /* Highlight color */
+}
+
+.hotel_card button {
+  margin-top: 10px;
+  background: rgb(46, 174, 207);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.hotel_card button:hover {
+  background: rgb(16, 55, 63);
+}
+
+@media (max-width: 768px) {
+  .hotel_cards_container {
     flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 350px; /* Adjust as needed */
-    margin: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    align-items: center;
+  }
+
+  .hotel_card {
+    width: 90%;
+  }
 }
 
-/* Image styling for budget cards */
-.budget-card img {
-    width: 100%;
-    height: 200px; /* Adjust to your preferred height */
-    object-fit: cover;
-    display: block;
+/* .budget-card img {
+  width: 100%;
+  height: 200px; 
+  object-fit: cover;
+  display: block;
 }
 
-/* Card content */
 .budget-card-content {
-    padding: 15px;
-    text-align: center;
+  padding: 15px;
+  text-align: center;
 }
 
 .budget-card-content h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
 .budget-card-content p {
-    font-size: 14px;
-    color: #555;
+  font-size: 14px;
+  color: #555;
 }
 
-/* Explore button */
 .budget-card .button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #d81b60;
-    color: white;
-    text-decoration: none;
-    margin-top: 10px;
-    border-radius: 5px;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #d81b60;
+  color: white;
+  text-decoration: none;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 
 .budget-card-content .explore-btn:hover {
-    background-color: #d81b60;
+  background-color: #d81b60;
 }
-
 
 .hotel-reviews .review {
-    margin: 20px 0;
-}
-
+  margin: 20px 0;
+} */
