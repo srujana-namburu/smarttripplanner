@@ -149,8 +149,11 @@ STATIC_ROOT= os.path.join(BASE_DIR, 'static')
 STATICFILES_DIR = {
     os.path.join(BASE_DIR, 'public/static')
 }
-MEDIA_ROOT = os.path.join(BASE_DIR, 'public/static')
+
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'public/static')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 LOGIN_REDIRECT_URL = '/home/'  # Redirect users to home after login
 LOGOUT_REDIRECT_URL = '/login/'  # Redirect users to login after logout

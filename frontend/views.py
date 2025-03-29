@@ -342,6 +342,8 @@ def signup(request):
         security_answer = request.POST.get('security_answer')
         profile_picture = request.FILES.get('profile_picture')
 
+        print('pp:',profile_picture)
+
         if User.objects.filter(email=email).exists():
             return render(request, 'frontend/signup.html', {'error': 'Email already registered'})
 
@@ -467,10 +469,13 @@ def login_view(request):
 
         # Authenticate using email if supported, else use username
         user = authenticate(request, username=user.username, password=password)
+        profile = Profile.objects.get(user=user)
         print(user)
+        print('pic:',profile.profile_picture)
 
         if user is not None:
             login(request, user)
+            request.session['profile_picture'] = profile.profile_picture.url
             messages.success(request, 'Login Successful.')
 
             # Redirect to 'next' page if exists, else dashboard
@@ -631,7 +636,7 @@ def analyze_location_view(request):
         # print("Unique Locations in DataFrame:", tourism_reviews_df["location"].unique())
 
         if location_reviews_df.empty:
-            return render(request, "frontend/safety_tips.html", {"message": f"No reviews available for {location}."})
+            return render(request, "frontend/sentiment_results.html", {"message": f"No reviews available for {location}."})
 
         # Get sentiment counts
         sentiment_counts = location_reviews_df['sentiment'].value_counts()
@@ -674,11 +679,11 @@ def analyze_location_view(request):
 
         summary = f"{positive_summary} {negative_summary}"
 
-        return render(request, "frontend/safety_tips.html", {
+        return render(request, "frontend/sentiment_results.html", {
             "location": location,
             "summary": summary,
             "pie_chart_base64": pie_chart_base64,
             "wordcloud_base64": wordcloud_base64
         })
 
-    return render(request, "frontend/safety_tips.html")
+    return render(request, "frontend/sentiment_results.html")

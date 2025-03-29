@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Safety Tips</title>
+    <style>
+      .image_container {
+        display: flex;
+        justify-content: space-around;
+      }
+      .images {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="image_container">
+      {% if pie_chart_base64 %}
+      <div class="images">
+        <h3>Sentiment Pie Chart</h3>
+        <img
+          src="data:image/png;base64,{{ pie_chart_base64 }}"
+          alt="Pie Chart"
+        />
+      </div>
+      {% endif %} {% if wordcloud_base64 %}
+      <div class="images">
+        <h3>Word Cloud</h3>
+        <img
+          src="data:image/png;base64,{{ wordcloud_base64 }}"
+          alt="Word Cloud"
+        />
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

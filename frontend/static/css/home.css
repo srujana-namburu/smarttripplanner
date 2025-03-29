@@ -100,7 +100,9 @@ body {
 
 .dropdown-content {
   display: none;
+  /* margin-right: 10rem; */
   position: absolute;
+  right: 0rem;
   background-color: white;
   min-width: 120px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
@@ -116,6 +118,8 @@ body {
   padding: 10px;
   display: block;
   text-decoration: none;
+  border-radius: 5px;
+  transition: all 0.1 ease-in;
 }
 
 .dropdown-content a:hover {

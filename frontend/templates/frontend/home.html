@@ -36,9 +36,10 @@
       <div class="logo">SmartTripPlanner</div>
       <div class="profile-dropdown">
         <img
-          src="{% static 'images/default-profile.png' %}"
+          src="{{ request.session.profile_picture }}"
           alt="Profile"
           class="profile-btn"
+          style="border: none"
         />
         <div class="dropdown-content">
           <a href="{% url 'update_profile' %}">Update Profile</a>
@@ -115,11 +116,11 @@
         <a href="{% url 'travel_safety' %}" class="feature_card">
           <div class="feature_detail">
             <div class="feature_detail_head">
-              <h1>RTSA</h1>
+              <h1>SA</h1>
               <h2>Sentimental Analysis</h2>
             </div>
             <div class="feature_detail_body">
-              <h3>Stay informed with live safety updates</h3>
+              <h3></h3>
               <!-- <h3>Your personal guide to seamless travel planning</h3> -->
             </div>
           </div>
