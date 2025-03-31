@@ -19,34 +19,55 @@
     </header>
 
     <main>
-      <section class="search">
-        <h2>Enter a Location for Sentiment Analysis</h2>
-        <form method="POST" action="{% url 'analyze_location' %}">
-          {% csrf_token %}
-          <input
-            type="text"
-            name="location"
-            placeholder="Enter location"
-            required
-          />
-          <button type="submit">Analyze</button>
-        </form>
-      </section>
-
-      {% if summary %}
       <section class="results">
-        <h2>Sentiment Analysis for {{ location }}</h2>
-        <p>{{ summary }}</p>
-
-        <div class="image-container">
-          <h3>Sentiment Distribution</h3>
-          <img src="{{ pie_chart_url }}" alt="Sentiment Pie Chart" />
-
-          <h3>Word Cloud</h3>
-          <img src="{{ wordcloud_url }}" alt="Word Cloud" />
-        </div>
+          <h2>Safety tips for {{ place }}</h2>
+  
+          <!-- Raw JSON output -->
+          <div id="originalJson" style="display: none;">
+              {{ safety_tips }}
+          </div>
+  
+          <pre id="formatted-safety-tips"></pre>
       </section>
-      {% endif %}
-    </main>
+  </main>
+  
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          try {
+              // Step 1: Get the raw text from the div
+              let rawText = document.getElementById("originalJson").innerText.trim();
+  
+              // Step 2: Normalize the text to ensure it is valid JSON
+              let cleanedText = rawText
+                  .replace(/'/g, '"')  // Replace single quotes with double quotes
+                  .replace(/None/g, 'null')  // Replace Python 'None' with JSON null
+                  .replace(/True/g, 'true')  // Fix boolean values
+                  .replace(/False/g, 'false')  // Fix boolean values
+                  .replace(/(\w+):/g, '"$1":');  // Ensure all keys are quoted properly
+  
+              // Step 3: Parse the cleaned JSON string
+              let safetyTipsData = JSON.parse(cleanedText);
+
+
+              const output = Object.keys(safetyTipsData).map((el) => {
+                return `${el}: ${safetyTipsData[el]}`
+              })
+
+              // Step 4: Display formatted JSON
+             const container = document.querySelector('#formatted-safety-tips');
+              output.forEach(tip => {
+                let p = document.createElement("p");
+                p.textContent = tip;
+                container.appendChild(p);
+            })
+
+          } catch (error) {
+              console.error("Error parsing JSON:", error);
+              document.getElementById("formatted-safety-tips").textContent = "Error parsing safety tips data.";
+          }
+      });
+  </script>
+  </div>
+  
   </body>
 </html>
