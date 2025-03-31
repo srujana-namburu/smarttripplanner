@@ -50,8 +50,7 @@
 
     <div class="welcome">
       <div class="welcome-text">
-        <h2>Welcome, Kalyan pendem</h2>
-        <!-- <h2>Welcome, {{ user.username }}</h2> -->
+        <h2>Welcome, {{ user.username }}</h2>
       </div>
 
       <img src="{% static 'images/island.png' %}" id="island" alt="" />
@@ -113,14 +112,14 @@
             />
           </div>
         </a>
-        <a href="{% url 'travel_safety' %}" class="feature_card">
+        <a href="{% url 'sentiment_analysis' %}" class="feature_card">
           <div class="feature_detail">
             <div class="feature_detail_head">
-              <h1>SA</h1>
-              <h2>Sentimental Analysis</h2>
+              <h1>TRA</h1>
+              <h2>Trip Reviews Analyzer</h2>
             </div>
             <div class="feature_detail_body">
-              <h3></h3>
+              <h3>Review Insights highlights key positives and negatives from traveler reviews.</h3>
               <!-- <h3>Your personal guide to seamless travel planning</h3> -->
             </div>
           </div>
