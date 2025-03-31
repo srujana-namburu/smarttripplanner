@@ -162,58 +162,60 @@ def analyze_location(location):
     }
 
 # View to handle sentiment analysis request
-def sentiment_analysis_view(request):
-    if request.method == "POST":
-        location = request.POST.get("location")
-        print(location)
-        result = analyze_location(location)
-        return JsonResponse(result)
-    return render(request, "frontend/sentiment_analysis.html")
+# def sentiment_analysis_view(request):
+#     if request.method == "POST":
+#         location = request.POST.get("location")
+#         print(location)
+#         result = analyze_location(location)
+#         return JsonResponse(result)
+#     return render(request, "frontend/sentiment_analysis.html")
 
 import os
 from django.shortcuts import render
 
 from django.shortcuts import render
 
-def sentiment_analysis(request):
-    pass
+# def sentiment_analysis(request):
+#     return render(request,'frontend/sem_analysis.html')
 
-df = pd.read_csv('safetytips.csv')
+safety_tips_df = pd.read_csv('safetytips.csv')
 
 # Ensure no NaN values
-df['place'] = df['Place'].fillna('').astype(str)
-df['season'] = df['Season'].fillna('').astype(str)
-df['tips'] = df['Tips'].fillna('')
+safety_tips_df['place'] = safety_tips_df['Place'].fillna('').astype(str)
+safety_tips_df['season'] = safety_tips_df['Season'].fillna('').astype(str)
+safety_tips_df['safety_tip'] = safety_tips_df['Tips'].fillna('')
 
 # Combine 'place' and 'season' for feature extraction
-df['combined'] = df['place'] + ' ' + df['season']
+safety_tips_df['feature_text'] = safety_tips_df['place'] + ' ' + safety_tips_df['season']
 
 # Train the model
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(df['combined'])
-y = df['tips']
-model = LogisticRegression()
-model.fit(X, y)
+text_vectorizer = TfidfVectorizer()
+X_train_features = text_vectorizer.fit_transform(safety_tips_df['feature_text'])
+y_train_labels = safety_tips_df['safety_tip']
+safety_tips_model = LogisticRegression()
+safety_tips_model.fit(X_train_features, y_train_labels)
 
+def fetch_safety_tips(destination):
+    """Fetch safety tips for a given destination."""
+    available_seasons = safety_tips_df['season'].unique()
+    safety_recommendations = {}
 
-def get_safety_tips(place):
-    """Fetch safety tips for a given place."""
-    seasons = df['season'].unique()
-    safety_tips = {}
-    for season in seasons:
-        input_text = f"{place} {season}"
-        input_vector = vectorizer.transform([input_text])
-        predicted_tips = model.predict(input_vector)[0]
-        safety_tips[season] = predicted_tips
-    return safety_tips
+    for season in available_seasons:
+        query_text = f"{destination} {season}"
+        query_vector = text_vectorizer.transform([query_text])
+        predicted_tip = safety_tips_model.predict(query_vector)[0]
+        safety_recommendations[season] = predicted_tip
+
+    return safety_recommendations
 
 
 def safety_tips_view(request):
     """Render safety tips page based on user input."""
     place = request.GET.get('place', '')  # Get the destination
-    safety_tips = get_safety_tips(place) if place else {}
+    safety_tips = fetch_safety_tips(place) if place else {}
 
     return render(request, 'frontend/travel_safety.html', {'place': place, 'safety_tips': safety_tips})
+
 
 
 def plan_trip(request):
@@ -290,7 +292,7 @@ def home(request):
 
 @login_required(login_url='/frontend/login/')
 def sentiment_analysis(request):
-    return render(request, "frontend/sentiment_analysis.html") 
+    return render(request, "frontend/sem_analysis.html") 
 
 @login_required(login_url='/frontend/login/')
 def virtual_assistant(request):
