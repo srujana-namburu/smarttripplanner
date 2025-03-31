@@ -30,6 +30,8 @@ urlpatterns = [
     path('sentiment_analysis/', views.sentiment_analysis, name="sentiment_analysis"),
     path('recommend-hotels/', views.recommend_hotels, name='recommend_hotels'),
     path("analyze-location/", views.analyze_location_view, name="analyze_location"),
+    path("analyze-location/", views.analyze_location_view, name="analyze_location"),
+
 
     
     # Add other paths as needed
